@@ -7,6 +7,7 @@ import {
   Param,
   NotFoundException,
   Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { CreateProductDto } from './dtos/create-product.dto';
 import { updateProductDto } from './dtos/update-product.dto';
@@ -41,8 +42,8 @@ export class ProductsController {
 
   // GET: ~/api/products
   @Get(':id')
-  public getSingleProduct(@Param('id') id: string) {
-    const product = this.products.find((p) => p.id === +id);
+  public getSingleProduct(@Param('id', ParseIntPipe) id: number) {
+    const product = this.products.find((p) => p.id === id);
     if (!product) throw new NotFoundException('this id is not in !!');
     return product;
   }
@@ -50,10 +51,10 @@ export class ProductsController {
   // PUT: ~/api/products
   @Put(':id')
   public updateSingleProduct(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() body: updateProductDto,
   ) {
-    const product = this.products.find((p) => p.id === +id);
+    const product = this.products.find((p) => p.id === id);
     if (!product) throw new NotFoundException('this id is not in !!');
     console.log(body);
     return product;
@@ -61,8 +62,8 @@ export class ProductsController {
 
   // DELETE: ~/api/products
   @Delete(':id')
-  public deleteSingleProduct(@Param('id') id: string) {
-    const product = this.products.find((p) => p.id === +id);
+  public deleteSingleProduct(@Param('id', ParseIntPipe) id: number) {
+    const product = this.products.find((p) => p.id === id);
     if (!product) throw new NotFoundException('this id is not in !!');
     return product;
   }
