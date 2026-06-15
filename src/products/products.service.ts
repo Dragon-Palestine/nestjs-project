@@ -1,9 +1,10 @@
-import { NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateProductDto } from './dtos/update-product.dto';
 import { CreateProductDto } from './dtos/create-product.dto';
 
 type ProductType = { id: number; title: string; price: number };
 
+@Injectable()
 export class ProductsService {
   private products: ProductType[] = [
     { id: 1, title: 'book', price: 10 },
