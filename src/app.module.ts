@@ -5,11 +5,13 @@ import { ReviewsModule } from './reviews/reviews.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Product } from './products/product.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Review } from './reviews/reviews.entity';
+import { User } from './users/user.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env.development',
+      envFilePath: `.env.${process.env.NODE_ENV}`,
     }),
     ProductsModule,
     UsersModule,
@@ -23,8 +25,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         password: config.get<string>('DB_PASSWORD'),
         port: config.get<number>('DB_PORT'),
         host: config.get<string>('DB_HOST'),
-        entities: [Product],
-        synchronize: true,
+        entities: [Product, Review, User],
+        synchronize: process.env.NODE_ENV !== 'production',
       }),
     }),
   ],
