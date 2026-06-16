@@ -2,52 +2,49 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateProductDto } from './dtos/update-product.dto';
 import { CreateProductDto } from './dtos/create-product.dto';
 import { UsersService } from 'src/users/users.service';
-
-type ProductType = { id: number; title: string; price: number };
+import { Product } from './product.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class ProductsService {
-  constructor(private readonly userService: UsersService) {}
+  constructor(
+    private readonly userService: UsersService,
 
-  private products: ProductType[] = [
-    { id: 1, title: 'book', price: 10 },
-    { id: 2, title: 'pen', price: 5 },
-    { id: 3, title: 'lap', price: 400 },
-  ];
+    @InjectRepository(Product)
+    private readonly productRepo: Repository<Product>,
+  ) {}
 
   /**
    *
-   * @param createProductDto
-   * @returns
+   * @param data
+   * @returns Promise<Product>
    */
 
-  public create(createProductDto: CreateProductDto): ProductType {
-    const newProduct: ProductType = {
-      id: this.products.length + 1,
-      title: createProductDto.title,
-      price: createProductDto.price,
-    };
-    this.products.push(newProduct);
+  public async create(data: CreateProductDto): Promise<Product> {
+    const newProduct: Product = this.productRepo.create(data);
+    await this.productRepo.save(newProduct);
     return newProduct;
   }
 
   /**
    *
-   * @returns
+   * @returns Promise<Product[]>
    */
 
-  public getAll() {
-    return { products: this.products, users: this.userService.getAll() };
+  public async getAll(): Promise<Product[]> {
+    const products: Product[] = await this.productRepo.find();
+    return products;
   }
   /**
    *
    * @param id
-   * @returns ProductType
+   * @returns Promise<Product>
    */
-  public getSingleProduct(id: number): ProductType {
-    const product: ProductType | undefined = this.products.find(
-      (p) => p.id === id,
-    );
+  public async getSingleProduct(id: number): Promise<Product> {
+    const product: Product | null = await this.productRepo.findOne({
+      where: { id },
+    });
     if (!product) throw new NotFoundException('this id is not in !!');
     return product;
   }
@@ -57,23 +54,32 @@ export class ProductsService {
    * @param updateProductDto
    * @returns
    */
-  public update(
+  public async update(
     id: number,
     updateProductDto: UpdateProductDto,
-  ): UpdateProductDto {
-    const product = this.products.find((p) => p.id === id);
+  ): Promise<Product> {
+    const product: Product | null = await this.productRepo.findOne({
+      where: { id },
+    });
     if (!product) throw new NotFoundException('this id is not in !!');
-    console.log(updateProductDto);
-    return updateProductDto;
+    product.title = updateProductDto.title ?? product.title;
+    product.description = updateProductDto.description ?? product.description;
+    product.price = updateProductDto.price ?? product.price;
+
+    return await this.productRepo.save(product);
   }
   /**
    *
    * @param id
    * @returns
    */
-  public delete(id: number): string {
-    const product = this.products.find((p) => p.id === id);
+  public async delete(id: number): Promise<string> {
+    const product: Product | null = await this.productRepo.findOne({
+      where: { id },
+    });
     if (!product) throw new NotFoundException('this id is not in !!');
+    await this.productRepo.remove(product);
+
     return 'product deleted';
   }
 }
