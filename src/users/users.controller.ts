@@ -1,19 +1,21 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { RegisterDto } from './dto/registerDto';
-import { User } from './user.entity';
+import { LoginDto } from './dto/loginDto';
+import type { AccessTokenType } from 'src/util/types';
 @Controller('api/users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-  // GET: ~/api/reviews
-  @Get()
-  public getAllUsers() {
-    return this.usersService.getAll();
-  }
-
   // POST: ~/api/users/auth/register
   @Post('auth/register')
-  public RegisterUser(@Body() body: RegisterDto): Promise<User> {
-    return this.usersService.Register(body);
+  public registerUser(@Body() body: RegisterDto): Promise<AccessTokenType> {
+    return this.usersService.register(body);
+  }
+
+  // POST: ~/api/users/auth/login
+  @Post('auth/login')
+  @HttpCode(HttpStatus.OK)
+  public loginUser(@Body() body: LoginDto): Promise<AccessTokenType> {
+    return this.usersService.login(body);
   }
 }
