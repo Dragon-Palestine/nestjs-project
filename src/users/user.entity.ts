@@ -28,7 +28,7 @@ export class User {
   @Column({ type: 'enum', enum: UserType, default: UserType.NORMAL_USER })
   role!: UserType;
 
-  @Column()
+  @Column({ default: false })
   isVerified!: boolean;
 
   @CreateDateColumn({
