@@ -7,16 +7,18 @@ import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/loginDto';
 import { JwtService } from '@nestjs/jwt';
 import { AccessTokenType, JWTPayloadType } from 'src/util/types';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly userRepo: Repository<User>,
     private readonly jwtService: JwtService,
+    private readonly config: ConfigService,
   ) {}
 
   /**
-   *
+   * register new user
    * @param RegisterDto
    * @returns Promise<AccessTokenType>
    */
@@ -47,7 +49,7 @@ export class UsersService {
   }
 
   /**
-   *
+   * login user and return access token
    * @param LoginDto
    * @returns Promise<AccessTokenType>
    */
@@ -67,7 +69,20 @@ export class UsersService {
   }
 
   /**
-   *
+   * get current user
+   * @param token -> string
+   * @returns Promise<User>
+   */
+  public async CurrentUser(id: number): Promise<User> {
+    const user: User | null = await this.userRepo.findOne({
+      where: { id },
+    });
+    if (!user) throw new BadRequestException('this user is not found !');
+    return user;
+  }
+
+  /**
+   * generate jwt
    * @param payload -> JWTPayloadType
    * @returns {accessToken} -> Promise<AccessTokenType>
    */
