@@ -8,6 +8,7 @@ import { LoginDto } from './dto/loginDto';
 import { JwtService } from '@nestjs/jwt';
 import { AccessTokenType, JWTPayloadType } from 'src/util/types';
 import { ConfigService } from '@nestjs/config';
+import { UpdateUserDto } from './dto/updateUserDto';
 
 @Injectable()
 export class UsersService {
@@ -31,8 +32,7 @@ export class UsersService {
     if (user) {
       throw new BadRequestException('this user is already exist !');
     }
-    const salt: string = await bcrypt.genSalt(10);
-    const hashPassword: string = await bcrypt.hash(password, salt);
+    const hashPassword: string = await this.generateHashPassword(password);
 
     const newUser: User = this.userRepo.create({
       email,
@@ -82,6 +82,42 @@ export class UsersService {
   }
   /**
    *
+   * @param id
+   * @param UpdateUserDto
+   * @returns updated user
+   */
+  public async update(
+    id: number,
+    { userName, password, email }: UpdateUserDto,
+  ): Promise<User> {
+    const user: User | null = await this.userRepo.findOne({
+      where: { id },
+    });
+    if (!user) throw new BadRequestException('this user is not found !');
+
+    email = email ?? user.email;
+    userName = userName ?? user.userName;
+
+    if (password) {
+      password = await this.generateHashPassword(password);
+    }
+
+    return this.userRepo.save({ ...user, email, userName, password });
+  }
+
+  public async delete(id: number, payload: JWTPayloadType): Promise<string> {
+    const user: User | null = await this.userRepo.findOne({
+      where: { id },
+    });
+    if (!user) throw new BadRequestException('this user is not found !');
+    if (user.id === payload.id || payload.role === 'admin')
+      await this.userRepo.remove(user);
+    else throw new BadRequestException('unauthorized !');
+    return 'user deleted successfully';
+  }
+
+  /**
+   *
    * @returns all users
    */
   public async getAllUsers(): Promise<User[]> {
@@ -96,5 +132,15 @@ export class UsersService {
   public async generateJwt(payload: JWTPayloadType): Promise<AccessTokenType> {
     const accessToken = await this.jwtService.signAsync(payload);
     return { accessToken };
+  }
+  /**
+   *
+   * @param password
+   * @returns hash password
+   */
+  public async generateHashPassword(password: string): Promise<string> {
+    const salt: string = await bcrypt.genSalt(10);
+    const hashPassword: string = await bcrypt.hash(password, salt);
+    return hashPassword;
   }
 }
