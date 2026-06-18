@@ -16,6 +16,9 @@ import { User } from './user.entity';
 import { AuthGuard } from './guards/auth.guard';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { Request } from 'express';
+import { UserType } from 'src/util/enums';
+import { AuthRolesGuard } from './guards/auth-roles.guard';
+import { Roles } from './decorators/user-role.decorator';
 
 @Controller('api/users')
 export class UsersController {
@@ -38,5 +41,13 @@ export class UsersController {
   @UseGuards(AuthGuard)
   public getCurrentUser(@CurrentUser() payload: JWTPayloadType): Promise<User> {
     return this.usersService.CurrentUser(payload.id);
+  }
+
+  // GET: ~/api/users
+  @Get()
+  @Roles(UserType.ADMIN)
+  @UseGuards(AuthRolesGuard)
+  public getAllUsers(): Promise<User[]> {
+    return this.usersService.getAllUsers();
   }
 }

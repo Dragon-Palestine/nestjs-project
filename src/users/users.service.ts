@@ -80,6 +80,13 @@ export class UsersService {
     if (!user) throw new BadRequestException('this user is not found !');
     return user;
   }
+  /**
+   *
+   * @returns all users
+   */
+  public async getAllUsers(): Promise<User[]> {
+    return this.userRepo.find();
+  }
 
   /**
    * generate jwt
