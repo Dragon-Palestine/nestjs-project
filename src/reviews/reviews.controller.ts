@@ -1,7 +1,9 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  Put,
   Param,
   ParseIntPipe,
   Post,
@@ -14,6 +16,7 @@ import { AuthRolesGuard } from 'src/users/guards/auth-roles.guard';
 import { CurrentUser } from 'src/users/decorators/current-user.decorator';
 import type { JWTPayloadType } from 'src/util/types';
 import { CreateReviewsDto } from './dto/create-reviews.dto';
+import { UpdateReviewsDto } from './dto/update-reviews.dto';
 @Controller('api/reviews')
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
@@ -26,11 +29,33 @@ export class ReviewsController {
     @CurrentUser() payload: JWTPayloadType,
     @Body() body: CreateReviewsDto,
   ) {
-    console.log(payload);
     return this.reviewsService.create(payload.id, productId, body);
+  }
+
+  @Put(':reviewId')
+  @Roles(UserType.ADMIN)
+  @UseGuards(AuthRolesGuard)
+  public updateReview(
+    @Param('reviewId', ParseIntPipe) reviewId: number,
+    @Body() body: UpdateReviewsDto,
+    @CurrentUser() payload: JWTPayloadType,
+  ) {
+    return this.reviewsService.update(payload.id, reviewId, body);
+  }
+
+  @Delete(':reviewId')
+  @Roles(UserType.ADMIN)
+  @UseGuards(AuthRolesGuard)
+  public deleteReview(
+    @Param('reviewId', ParseIntPipe) reviewId: number,
+    @CurrentUser() payload: JWTPayloadType,
+  ) {
+    return this.reviewsService.delete(payload.id, reviewId);
   }
   // GET: ~/api/reviews
   @Get()
+  @Roles(UserType.ADMIN)
+  @UseGuards(AuthRolesGuard)
   public getAllReviews() {
     return this.reviewsService.getAll();
   }

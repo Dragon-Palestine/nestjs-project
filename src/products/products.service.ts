@@ -11,9 +11,7 @@ import { JwtService } from '@nestjs/jwt';
 export class ProductsService {
   constructor(
     private readonly userService: UsersService,
-
     private readonly jwtService: JwtService,
-
     @InjectRepository(Product)
     private readonly productRepo: Repository<Product>,
   ) {}
