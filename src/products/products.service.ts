@@ -3,7 +3,7 @@ import { UpdateProductDto } from './dtos/update-product.dto';
 import { CreateProductDto } from './dtos/create-product.dto';
 import { UsersService } from 'src/users/users.service';
 import { Product } from './product.entity';
-import { Repository } from 'typeorm';
+import { Like, Between, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 
@@ -39,8 +39,18 @@ export class ProductsService {
    * @returns Promise<Product[]>
    */
 
-  public async getAll(): Promise<Product[]> {
-    const products: Product[] = await this.productRepo.find();
+  public async getAll(
+    title?: string,
+    minPrice?: number,
+    maxPrice?: number,
+  ): Promise<Product[]> {
+    const filters: any = {
+      ...(title ? { title: Like(`%${title}%`) } : {}),
+      ...(minPrice && maxPrice ? { price: Between(minPrice, maxPrice) } : {}),
+    };
+    const products: Product[] = await this.productRepo.find({
+      where: filters,
+    });
     return products;
   }
   /**
