@@ -55,9 +55,10 @@ export class AuthRolesGuard implements CanActivate {
       const user: User | null = await this.usersService.CurrentUser(payload.id);
       if (!user) throw new BadRequestException('this user is not found !');
 
-      if (roles.includes(user.role)) return true;
-
-      request[CURRENT_USER_KEY] = payload;
+      if (roles.includes(user.role)) {
+        request[CURRENT_USER_KEY] = payload;
+        return true;
+      }
     } catch {
       throw new UnauthorizedException('you are not allowed');
     }

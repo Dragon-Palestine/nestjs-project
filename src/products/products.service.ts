@@ -5,11 +5,14 @@ import { UsersService } from 'src/users/users.service';
 import { Product } from './product.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class ProductsService {
   constructor(
     private readonly userService: UsersService,
+
+    private readonly jwtService: JwtService,
 
     @InjectRepository(Product)
     private readonly productRepo: Repository<Product>,
@@ -21,8 +24,12 @@ export class ProductsService {
    * @returns Promise<Product>
    */
 
-  public async create(data: CreateProductDto): Promise<Product> {
-    const newProduct: Product = this.productRepo.create(data);
+  public async create(
+    data: CreateProductDto,
+    userId: number,
+  ): Promise<Product> {
+    const user = await this.userService.CurrentUser(userId);
+    const newProduct: Product = this.productRepo.create({ ...data, user });
     await this.productRepo.save(newProduct);
     return newProduct;
   }
