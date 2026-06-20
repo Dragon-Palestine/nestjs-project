@@ -10,5 +10,6 @@ import { JwtModule } from '@nestjs/jwt';
   providers: [ProductsService],
   // injecting user module and product entity to usining thwm incide products controller
   imports: [UsersModule, TypeOrmModule.forFeature([Product]), JwtModule],
+  exports: [ProductsService],
 })
 export class ProductsModule {}
