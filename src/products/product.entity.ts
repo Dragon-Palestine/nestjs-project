@@ -39,9 +39,15 @@ export class Product {
   })
   updatedAt!: Date;
 
-  @OneToMany(() => Review, (review) => review.product, { eager: true })
+  @OneToMany(() => Review, (review) => review.product, {
+    eager: true,
+    onDelete: 'CASCADE',
+  })
   Reviews!: Review[];
 
-  @ManyToOne(() => User, (user) => user.products, { eager: true })
+  @ManyToOne(() => User, (user) => user.products, {
+    eager: true,
+    onDelete: 'CASCADE',
+  })
   user!: User;
 }
