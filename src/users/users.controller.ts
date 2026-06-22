@@ -11,6 +11,9 @@ import {
   UseGuards,
   Param,
   ParseIntPipe,
+  UseInterceptors,
+  UploadedFile,
+  Res,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { RegisterDto } from './dto/registerDto';
@@ -19,11 +22,12 @@ import type { AccessTokenType, JWTPayloadType } from 'src/util/types';
 import { User } from './user.entity';
 import { AuthGuard } from './guards/auth.guard';
 import { CurrentUser } from './decorators/current-user.decorator';
-import { Request } from 'express';
+import type { Request, Response } from 'express';
 import { UserType } from 'src/util/enums';
 import { AuthRolesGuard } from './guards/auth-roles.guard';
 import { Roles } from './decorators/user-role.decorator';
 import { UpdateUserDto } from './dto/updateUserDto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('api/users')
 export class UsersController {
@@ -73,5 +77,25 @@ export class UsersController {
   @UseGuards(AuthRolesGuard)
   public getAllUsers(): Promise<User[]> {
     return this.usersService.getAllUsers();
+  }
+
+  @Post('upload-profile-image')
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @UseInterceptors(FileInterceptor('file'))
+  public uploadProfileImge(
+    @CurrentUser() payload: JWTPayloadType,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.usersService.setProfileImage(payload.id, file.filename);
+  }
+
+  @Get('profile-image')
+  @UseGuards(AuthGuard)
+  public showProfileImage(
+    @CurrentUser() payload: JWTPayloadType,
+    @Res() res: Response,
+  ) {
+    return this.usersService.getProfileImage(payload.id, res);
   }
 }

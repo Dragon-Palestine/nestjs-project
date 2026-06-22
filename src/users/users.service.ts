@@ -9,6 +9,7 @@ import { AccessTokenType, JWTPayloadType } from 'src/util/types';
 import { ConfigService } from '@nestjs/config';
 import { UpdateUserDto } from './dto/updateUserDto';
 import { AuthProvider } from './auth.provider';
+import { Response } from 'express';
 
 @Injectable()
 export class UsersService {
@@ -95,5 +96,17 @@ export class UsersService {
    */
   public async getAllUsers(): Promise<User[]> {
     return this.userRepo.find();
+  }
+
+  public async setProfileImage(id: number, filename: string): Promise<User> {
+    const user: User = await this.CurrentUser(id);
+    user.profileImage = filename;
+    return this.userRepo.save(user);
+  }
+
+  public async getProfileImage(userId: number, res: Response) {
+    const user = await this.CurrentUser(userId);
+    const filename: string = user.profileImage;
+    return res.sendFile(filename, { root: './images/users' });
   }
 }
