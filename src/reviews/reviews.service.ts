@@ -10,6 +10,7 @@ import { Repository } from 'typeorm';
 import { Review } from './reviews.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateReviewsDto } from './dto/update-reviews.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class ReviewsService {
@@ -18,6 +19,7 @@ export class ReviewsService {
     private readonly productsService: ProductsService,
     @InjectRepository(Review)
     private readonly reviewRepo: Repository<Review>,
+    private readonly config: ConfigService,
   ) {}
 
   /**
@@ -71,8 +73,11 @@ export class ReviewsService {
    *
    * @returns
    */
-  public getAll() {
+  public getAll(pageNumber: number): Promise<Review[]> {
+    const revPerPage: number = +(this.config.get('REVIEW_PER_PAGE') ?? 3);
     return this.reviewRepo.find({
+      skip: pageNumber * (revPerPage - 1),
+      take: revPerPage,
       order: {
         createdAt: 'DESC',
       },
