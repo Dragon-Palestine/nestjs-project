@@ -5,7 +5,7 @@ import { User } from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LoginDto } from './dto/loginDto';
 import { JwtService } from '@nestjs/jwt';
-import { AccessTokenType, JWTPayloadType } from 'src/util/types';
+import { AccessTokenType, JWTPayloadType } from '../util/types';
 import { ConfigService } from '@nestjs/config';
 import { UpdateUserDto } from './dto/updateUserDto';
 import { AuthProvider } from './auth.provider';
@@ -15,8 +15,6 @@ import { Response } from 'express';
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly userRepo: Repository<User>,
-    private readonly jwtService: JwtService,
-    private readonly config: ConfigService,
     private readonly authProvider: AuthProvider,
   ) {}
 

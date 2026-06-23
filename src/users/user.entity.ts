@@ -8,8 +8,8 @@ import {
 } from 'typeorm';
 import { CURRENT_TIMESTAMP } from '../util/constants';
 import { UserType } from '../util/enums';
-import { Product } from 'src/products/product.entity';
-import { Review } from 'src/reviews/reviews.entity';
+import { Product } from '../products/product.entity';
+import { Review } from '../reviews/reviews.entity';
 import { Exclude } from 'class-transformer';
 
 @Entity('users')

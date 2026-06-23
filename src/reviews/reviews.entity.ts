@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { Product } from '../products/product.entity';
 import { CURRENT_TIMESTAMP } from '../util/constants';
-import { User } from 'src/users/user.entity';
+import { User } from '../users/user.entity';
 @Entity('reviews')
 export class Review {
   @PrimaryGeneratedColumn()

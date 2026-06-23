@@ -1,17 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateProductDto } from './dtos/update-product.dto';
 import { CreateProductDto } from './dtos/create-product.dto';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../users/users.service';
 import { Product } from './product.entity';
 import { Like, Between, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class ProductsService {
   constructor(
     private readonly userService: UsersService,
-    private readonly jwtService: JwtService,
     @InjectRepository(Product)
     private readonly productRepo: Repository<Product>,
   ) {}

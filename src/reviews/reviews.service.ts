@@ -3,14 +3,15 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { ProductsService } from 'src/products/products.service';
-import { UsersService } from 'src/users/users.service';
+import { ProductsService } from '../products/products.service';
+import { UsersService } from '../users/users.service';
 import { CreateReviewsDto } from './dto/create-reviews.dto';
 import { Repository } from 'typeorm';
 import { Review } from './reviews.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateReviewsDto } from './dto/update-reviews.dto';
 import { ConfigService } from '@nestjs/config';
+import { User } from '../users/user.entity';
 
 @Injectable()
 export class ReviewsService {
@@ -34,18 +35,24 @@ export class ReviewsService {
     productId: number,
     data: CreateReviewsDto,
   ): Promise<Review> {
-    const user = await this.usersService.CurrentUser(userId);
+    const user: User = await this.usersService.CurrentUser(userId);
     const product = await this.productsService.getSingleProduct(productId);
     const review = this.reviewRepo.create({ ...data, user, product });
     return await this.reviewRepo.save(review);
   }
-
+  /**
+   *
+   * @param userId
+   * @param reviewId
+   * @param UpdateReviewsDto
+   * @returns Promise<Review>
+   */
   public async update(
     userId: number,
     reviewId: number,
     data: UpdateReviewsDto,
-  ) {
-    const review = await this.getSingle(reviewId);
+  ): Promise<Review> {
+    const review: Review = await this.getSingle(reviewId);
 
     if (review.user.id !== userId) {
       throw new BadRequestException('unauthorized !');
@@ -57,8 +64,15 @@ export class ReviewsService {
     return await this.reviewRepo.save(review);
   }
 
-  public async delete(userId: number, reviewId: number) {
-    const review = await this.getSingle(reviewId);
+  /**
+   *
+   * @param userId
+   * @param reviewId
+   * @returns
+   */
+
+  public async delete(userId: number, reviewId: number): Promise<Review> {
+    const review: Review = await this.getSingle(reviewId);
     if (review.user.id !== userId)
       throw new BadRequestException('unauthorized !');
     return await this.reviewRepo.remove(review);

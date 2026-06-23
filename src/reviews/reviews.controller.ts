@@ -11,11 +11,11 @@ import {
   Query,
 } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
-import { Roles } from 'src/users/decorators/user-role.decorator';
-import { UserType } from 'src/util/enums';
-import { AuthRolesGuard } from 'src/users/guards/auth-roles.guard';
-import { CurrentUser } from 'src/users/decorators/current-user.decorator';
-import type { JWTPayloadType } from 'src/util/types';
+import { Roles } from '../users/decorators/user-role.decorator';
+import { UserType } from '../util/enums';
+import { AuthRolesGuard } from '../users/guards/auth-roles.guard';
+import { CurrentUser } from '../users/decorators/current-user.decorator';
+import type { JWTPayloadType } from '../util/types';
 import { CreateReviewsDto } from './dto/create-reviews.dto';
 import { UpdateReviewsDto } from './dto/update-reviews.dto';
 @Controller('api/reviews')

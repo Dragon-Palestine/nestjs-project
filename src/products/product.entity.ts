@@ -9,8 +9,8 @@ import {
 } from 'typeorm';
 
 import { CURRENT_TIMESTAMP } from '../util/constants';
-import { Review } from 'src/reviews/reviews.entity';
-import { User } from 'src/users/user.entity';
+import { Review } from '../reviews/reviews.entity';
+import { User } from '../users/user.entity';
 
 @Entity('products')
 export class Product {

@@ -13,11 +13,11 @@ import {
 import { CreateProductDto } from './dtos/create-product.dto';
 import { UpdateProductDto } from './dtos/update-product.dto';
 import { ProductsService } from './products.service';
-import { AuthRolesGuard } from 'src/users/guards/auth-roles.guard';
-import { UserType } from 'src/util/enums';
-import { Roles } from 'src/users/decorators/user-role.decorator';
-import { CurrentUser } from 'src/users/decorators/current-user.decorator';
-import type { JWTPayloadType } from 'src/util/types';
+import { AuthRolesGuard } from '../users/guards/auth-roles.guard';
+import { UserType } from '../util/enums';
+import { Roles } from '../users/decorators/user-role.decorator';
+import { CurrentUser } from '../users/decorators/current-user.decorator';
+import type { JWTPayloadType } from '../util/types';
 
 // type ProductType = { id: number; title: string; price: number };
 

@@ -18,12 +18,12 @@ import {
 import { UsersService } from './users.service';
 import { RegisterDto } from './dto/registerDto';
 import { LoginDto } from './dto/loginDto';
-import type { AccessTokenType, JWTPayloadType } from 'src/util/types';
+import type { AccessTokenType, JWTPayloadType } from '../util/types';
 import { User } from './user.entity';
 import { AuthGuard } from './guards/auth.guard';
 import { CurrentUser } from './decorators/current-user.decorator';
 import type { Request, Response } from 'express';
-import { UserType } from 'src/util/enums';
+import { UserType } from '../util/enums';
 import { AuthRolesGuard } from './guards/auth-roles.guard';
 import { Roles } from './decorators/user-role.decorator';
 import { UpdateUserDto } from './dto/updateUserDto';

@@ -4,8 +4,8 @@ import { ReviewsService } from './reviews.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Review } from './reviews.entity';
 import { JwtModule } from '@nestjs/jwt';
-import { UsersModule } from 'src/users/users.module';
-import { ProductsModule } from 'src/products/products.module';
+import { UsersModule } from '../users/users.module';
+import { ProductsModule } from '../products/products.module';
 @Module({
   controllers: [ReviewsController],
   providers: [ReviewsService],
